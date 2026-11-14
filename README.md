@@ -1,59 +1,35 @@
 # Machine Learning from Scratch
 
-Implementations and demonstrations of five machine-learning models using Python and NumPy. The model code is written for learning purposes; scikit-learn is used in the notebooks to load datasets, split data, and (for linear regression) compare results.
+A beginner-oriented collection of five machine-learning implementations. NumPy contains the model calculations; scikit-learn supplies datasets, train/test splitting, metrics, PCA, scaling, and a linear-regression comparison.
 
 ## Models
 
-| Model | Implementation and example | Documentation |
+| Model | Notebook / code | Detailed guide |
 |---|---|---|
-| Decision Tree | [`DT.py`](DT.py), [`Decision_Tree.ipynb`](Decision_Tree.ipynb) | [Decision tree README](docs/decision_tree/README.md) |
-| Linear Regression | [`linear_regression.ipynb`](linear_regression.ipynb) | [Linear regression README](docs/linear_regression/README.md) |
-| Logistic Regression | [`Logistic_Regression.ipynb`](Logistic_Regression.ipynb) | [Logistic regression README](docs/logistic_regression/README.md) |
-| Random Forest | [`Random_Forest.ipynb`](Random_Forest.ipynb) | [Random forest README](docs/random_forest/README.md) |
-| Support Vector Machine (SVM) | [`SVM.ipynb`](SVM.ipynb) | [SVM README](docs/svm/README.md) |
+| Decision Tree | [Decision_Tree.ipynb](docs/decision_tree/Decision_Tree.ipynb) | [Math and implementation](docs/decision_tree/README.md) |
+| Linear Regression | [linear_regression.ipynb](docs/linear_regression/linear_regression.ipynb) | [Math and implementation](docs/linear_regression/README.md) |
+| Logistic Regression | [Logistic_Regression.ipynb](docs/logistic_regression/Logistic_Regression.ipynb) | [Math and implementation](docs/logistic_regression/README.md) |
+| Random Forest | [Random_Forest.ipynb](docs/random_forest/Random_Forest.ipynb) | [Math and implementation](docs/random_forest/README.md) |
+| Linear SVM | [SVM.ipynb](docs/svm/SVM.ipynb) | [Math and implementation](docs/svm/README.md) |
 
-## Repository layout
+The Random Forest notebook imports its tree implementation from [DT.py](docs/random_forest/DT.py).
 
-```text
-ch4/
-├── DT.py
-├── Decision_Tree.ipynb
-├── Logistic_Regression.ipynb
-├── Random_Forest.ipynb
-├── SVM.ipynb
-├── linear_regression.ipynb
-└── docs/
-    ├── decision_tree/README.md
-    ├── linear_regression/README.md
-    ├── logistic_regression/README.md
-    ├── random_forest/README.md
-    └── svm/README.md
-```
+## Setup and run
 
-The project currently keeps the model notebooks in the repository root; the `docs/` subfolders contain documentation only.
-
-## Requirements
-
-The notebooks import Python packages `numpy`, `matplotlib`, and `scikit-learn`. Install them in your Python environment if needed:
+From the project root, install dependencies and launch Jupyter:
 
 ```bash
 python -m pip install numpy matplotlib scikit-learn jupyter
-```
-
-## Run the notebooks
-
-Open a terminal in this folder, start Jupyter, and open a notebook:
-
-```bash
 jupyter lab
 ```
 
-Run notebook cells from top to bottom. The classification examples use scikit-learn's built-in Wisconsin breast cancer dataset. The linear regression notebook creates synthetic regression data with `sklearn.datasets.make_regression`; no external dataset files are required.
+Open a notebook and run cells in order. Start Jupyter from this root so `Random_Forest.ipynb` can import `DT.py` from its folder. No external dataset files are needed.
 
-The Random Forest notebook imports `DecisionTree` from `DT.py`, so keep both files in the same folder and start Jupyter with this folder as the working directory.
+## Data used
 
-## Notes
+- Decision Tree, Logistic Regression, Random Forest, and SVM use scikit-learn's built-in Wisconsin breast cancer dataset with a 70/30 split (`random_state=42`).
+- Linear Regression generates 100 synthetic one-feature samples (`noise=20`, `random_state=4`) and uses an 80/20 split (`random_state=42`).
 
-- These are educational implementations and are not intended as drop-in replacements for production ML libraries.
-- Random choices are made in the tree and forest implementations; results can vary between runs because the code does not set a NumPy random seed for those choices.
-- The notebooks contain different examples and plotting choices; see each model README for details and implementation caveats.
+## Project scope
+
+These are learning implementations, not production estimators. Review each model guide for formulas, output interpretation, and code-specific caveats. Tree feature selection and Random Forest bootstrap sampling are unseeded, so those results may change across runs.

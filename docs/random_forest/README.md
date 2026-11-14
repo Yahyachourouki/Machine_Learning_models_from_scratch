@@ -1,28 +1,30 @@
-# Random Forest
+# Random Forest Classifier
 
-This notebook implements a classifier that combines predictions from multiple decision trees.
+The notebook combines many decision trees. Each tree sees a bootstrap sample of the training rows and considers a random subset of features at each split. The forest predicts by majority vote.
 
-## Files
+## Files and run
 
-- [`../../Random_Forest.ipynb`](../../Random_Forest.ipynb): defines `RandomForest` and runs the example.
-- [`../../DT.py`](../../DT.py): supplies the `DecisionTree` class imported by the notebook.
+Open `Random_Forest.ipynb` in Jupyter and run cells in order. It imports `DecisionTree` from the adjacent `DT.py`, so keep both files together. The example uses the breast cancer dataset with a 70/30 split (`random_state=42`). Requirements: NumPy and scikit-learn.
 
-## Implementation
+## Mathematics
 
-`RandomForest.fit(X, y)` creates bootstrap samples by sampling training rows with replacement. It trains one decision tree per sample and uses a default feature count of approximately the square root of the number of input features. `predict(X)` collects each tree's predictions and returns the most frequent class for each row.
+For each tree \(b=1,\ldots,B\), bootstrap sampling draws \(n\) training rows with replacement. The tree is fit on that sample. At each split it considers \(m\) candidate features (the default here is approximately \(\sqrt d\) for \(d\) input features) and uses the information-gain criterion described in the [Decision Tree README](../decision_tree/README.md).
 
-## Run
+Each tree predicts class \(h_b(x)\). The forest prediction is the most common class:
 
-Open `Random_Forest.ipynb` in Jupyter and run cells from top to bottom, with `DT.py` in the same project folder. The example uses the built-in breast cancer dataset, a 70/30 train/test split with `random_state=42`, and 10 trees with `max_depth=5`.
+\[
+\hat y(x)=\operatorname{mode}(h_1(x),h_2(x),\ldots,h_B(x)).
+\]
+
+Bootstrapping and random feature subsets make trees less alike. Majority voting can reduce the variance of a single tree, though it does not guarantee better performance in every case.
 
 ## Output
 
-The notebook prints test accuracy. It does not currently create a plot or display a confusion matrix.
+The notebook fits 10 trees with maximum depth 5 and prints test accuracy. It does not currently plot the forest or show a confusion matrix.
 
-## Implementation note
+## Implementation notes
 
-The tree and bootstrap sampling use NumPy randomness without a fixed seed, so repeated runs can produce different forests and accuracy values. The forest uses the custom tree implementation rather than scikit-learn's random forest.
-
-## Dependencies
-
-`numpy` and `scikit-learn`. `DT.py` is a local project dependency.
+- Set `n_feats` to override the default feature count; otherwise it uses `max(1, int(sqrt(d)))`.
+- Bootstrap sampling and tree feature selection are not seeded, so results can change from run to run even though the train/test split is fixed.
+- Majority voting uses `np.bincount`; class labels therefore need to be nonnegative integers.
+- The implementation has no out-of-bag score, class probabilities, or parallel fitting. It is an educational version, not a full-featured forest library.

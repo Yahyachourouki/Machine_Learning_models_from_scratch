@@ -1,27 +1,34 @@
-# Logistic Regression
+# Logistic Regression Classifier
 
-This notebook implements binary logistic regression with a sigmoid function and gradient descent.
+This notebook implements binary logistic regression using NumPy and gradient descent, then evaluates it on the Wisconsin breast cancer dataset.
 
-## File
+## File and run
 
-- [`../../Logistic_Regression.ipynb`](../../Logistic_Regression.ipynb)
+Open `Logistic_Regression.ipynb` in Jupyter and run cells in order. The notebook uses a 70/30 train/test split (`random_state=42`). Requirements: NumPy, Matplotlib, and scikit-learn (metrics and datasets).
 
-## Implementation
+## Mathematics
 
-The `logistic_regression` class initializes weights and bias to zero. `fit(x, y)` calculates sigmoid probabilities, gradients, and parameter updates over `n_iters` iterations. `predict(x)` converts probabilities above 0.5 to class 1 and the rest to class 0.
+For an input \(x_i\), the model forms a linear score \(z_i=x_i^Tw+b\) and maps it to a probability with the sigmoid:
 
-## Run
+\[
+p_i=\sigma(z_i)=\frac{1}{1+e^{-z_i}}=P(y_i=1\mid x_i).
+\]
 
-Open the notebook in Jupyter and run cells from top to bottom. It loads scikit-learn's built-in breast cancer dataset and makes a 70/30 train/test split with `random_state=42`.
+For binary labels \(y_i\in\{0,1\}\), the standard binary cross-entropy objective is
 
-## Output
+\[
+J(w,b)=-\frac{1}{n}\sum_i[y_i\log p_i+(1-y_i)\log(1-p_i)].
+\]
 
-The notebook prints test accuracy and displays a confusion matrix labeled with the dataset's class names. The matrix compares actual labels with predicted labels; the diagonal cells are correct predictions and off-diagonal cells are errors.
+Its gradients are \(\nabla_wJ=X^T(p-y)/n\) and \(\partial J/\partial b=\sum_i(p_i-y_i)/n\). The notebook applies gradient descent using these quantities. Prediction thresholds the sigmoid probability at 0.5: above 0.5 is class 1, otherwise class 0.
 
-## Implementation note
+## Output and interpretation
 
-The notebook fits directly on the dataset's 30 input features without feature scaling. The code does not include a cost-history plot or probability output method.
+The notebook prints test accuracy and displays a confusion matrix. Rows are actual labels and columns are predicted labels. Diagonal cells are correct classifications; off-diagonal cells show errors (false positives and false negatives). Dataset class names label the axes.
 
-## Dependencies
+## Limitations
 
-`numpy`, `matplotlib`, and `scikit-learn`.
+- The 30 input features are used without scaling. Feature magnitudes can affect optimization and the learning rate's suitability.
+- The notebook does not retain training loss, return probabilities through a separate method, or apply regularization.
+- The direct sigmoid formula may overflow for extreme scores; a numerically stable implementation is not used.
+- Accuracy alone can hide which class is misclassified; inspect the confusion matrix as well.

@@ -1,26 +1,39 @@
-# Decision Tree
+# Decision Tree Classifier
 
-The project implements a classification tree that recursively splits the training data using feature thresholds and information gain.
+The notebook builds a classifier by recursively splitting the training set. An internal node tests whether one feature is at most a threshold; a leaf predicts the most common class among the training rows that reach it.
 
-## Files
+## File and run
 
-- [`../../DT.py`](../../DT.py): reusable `DecisionTree` implementation and its `node` class.
-- [`../../Decision_Tree.ipynb`](../../Decision_Tree.ipynb): trains and evaluates the tree, draws the learned tree, plots 2D decision regions, and compares accuracy across tree depths.
+Open `Decision_Tree.ipynb` in Jupyter and run cells in order. It loads scikit-learn's built-in Wisconsin breast cancer dataset and makes a 70/30 train/test split (`random_state=42`). Requirements: NumPy, Matplotlib, and scikit-learn. The reusable `DecisionTree` implementation is also in `../random_forest/DT.py`.
 
-## Implementation
+## Mathematics
 
-`DecisionTree.fit(X, y)` grows the tree recursively. At each node it searches candidate feature/threshold splits and chooses the split with the greatest entropy-based information gain. It stops at a pure node, when `max_depth` is reached, or when there are fewer than `min_samples_split` samples. A leaf predicts the most common label among its samples. `predict(X)` traverses the learned tree for each row.
+For a node with class fractions \(p_1,\ldots,p_K\), entropy measures class mixture:
 
-The default `n_features=None` uses all features. Candidate thresholds are unique observed feature values. Feature selection uses NumPy randomness when a subset is requested; the notebook does not set a random seed for this part.
+\[
+H(S)=-\sum_{k=1}^{K}p_k\log_2(p_k).
+\]
 
-## Run
+A candidate split on feature \(j\) at threshold \(t\) creates \(S_L=\{i:x_{ij}\le t\}\) and \(S_R=\{i:x_{ij}>t\}\). Information gain is the reduction in entropy:
 
-Open `Decision_Tree.ipynb` in Jupyter and run its cells from top to bottom. It uses the built-in breast cancer dataset, a 70/30 train/test split with `random_state=42`, and scikit-learn for dataset loading and splitting. `DT.py` can also be imported by another Python script from this folder.
+\[
+IG(S,j,t)=H(S)-\frac{|S_L|}{|S|}H(S_L)-\frac{|S_R|}{|S|}H(S_R).
+\]
 
-## Output
+The code chooses the feature-threshold pair with maximum gain, then repeats the process in each child. It stops when the node is pure, reaches `max_depth`, or has fewer rows than `min_samples_split`. A leaf uses the majority label.
 
-The notebook prints test accuracy, draws a tree visualization, plots decision regions using mean radius and mean texture only, and plots train/test accuracy for tree depths 1 through 10. The 2D decision-region plot is a separate tree trained on those two features; it is not the all-feature model.
+## Notebook outputs
+
+It prints test accuracy, draws the trained tree, plots 2D decision regions, and plots train/test accuracy for depths 1–10. The first tree uses all 30 features with depth 5. The 2D plot trains a separate depth-4 tree using mean radius and mean texture only, so it is a visualization of a different model. The tree drawing is also truncated at the requested display depth.
+
+## Implementation notes
+
+- If `n_features` is omitted, all features are considered at each split. Otherwise the code randomly chooses that many features at each node.
+- The feature-subset selection is not seeded, so tree results can differ between runs.
+- Entropy uses `np.bincount`, so labels must be nonnegative integers (as in the notebook's 0/1 labels).
+- Candidate thresholds are the observed unique values; the code does not search midpoints between adjacent values.
+- The implementation is a teaching example and does not support arbitrary categorical/string features or missing values.
 
 ## Dependencies
 
-`numpy`, `matplotlib`, and `scikit-learn`.
+NumPy, Matplotlib, scikit-learn.
